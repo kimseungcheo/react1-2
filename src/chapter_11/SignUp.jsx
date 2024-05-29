@@ -4,6 +4,7 @@ export default function SignUp() {
     const [name, setName] = useState()
     const [gender, setGender] = useState('남자')
     const [document, setDocument] = useState()
+    const [havebreakfest, setHaveBreakfest]= useState(true)
 
     const handleChangeName = (e) => {
         setName(e.target.value)
@@ -14,9 +15,13 @@ export default function SignUp() {
     const handleChangeDocument = (e) => {
         setDocument(e.target.value)
     }
+    const handleChangeHaveBreakfest = (e) => {
+        setHaveBreakfest(e.target.checked)
+    }
     const handleSubmit = (e) => {
-        alert(`name: ${name}, gender: ${gender} document: ${document}`)
-        e.preventDefault()
+        alert(`name: ${name}, gender: ${gender} 
+        document: ${document} havebreakfest: ${havebreakfest}`,
+    e.preventDefault())
     }
     return(
         <form onSubmit ={handleSubmit}>
@@ -37,8 +42,16 @@ export default function SignUp() {
             <br>
             </br>
             <label>
-                document:
+                document:<br></br>
                 <textarea value={document} onChange={handleChangeDocument} placeholder="문장을 입력해주세요."/>
+            </label>
+            <br>
+            </br>
+            <br>
+            </br>
+            <label>
+                havebreakfest:
+                <input type="checkbox"checked={havebreakfest} onChange={handleChangeHaveBreakfest} />
             </label>
             <br>
             </br>
