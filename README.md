@@ -1,11 +1,42 @@
 # 김승철 201630240
 
+# 13.1 합성에 대해 알아보지
+
+합성은 여러개의 컴포넌트를 합쳐서 새로운 컴포넌트를 만드는 것입니다
+조합 방법에 따라 합성의 사용기법은 다음과같이 나눌수 있습니다.
+
+[1] Containment (담다, 포함하다, 격리하다)
+특정 컴포넌트가 하위 컴포넌트를 포함하는 형태의 합성 방법입니다.
+컴포넌트에따라서는 어떤 자식 엘리먼트감들어올지 미리 예상할 수 없는 경우가 있습니다
+범용적인 박스 역할을 하는 sidevar혹은 dialog와 같은 컴포넌트에서 특히 자주 볼수 있습니다
+이런 컴포넌트에서느는children prop을 사용하여 자식 엘리먼트를 출력에 그대로 전달하는것이 좋습니다
+이때 children prop은 컴포넌트의 props에 기본적으로 들어있는 children속성을 사용합니다.
+리액트에서는 props.children을 통해 하위 컴포넌트를 하나로 모아서 제공해 줍니다
+만일 여러개의 children집합이 필요한 경우는 별도로 props를 정의해서각각 원하는 컴포넌트를 넣어줍니다
+예와 같이 SPitPane은 화면을 왼쪽과 오른쪽으로 분할해 주고 App에서는 SpitPane을 사용해서 left, right두개의 props를 정의하고 있습니다
+즉 App에서 left, right를 props를 받아서 화면을 분할하게 됩니다 이처럼 여러개의 Children집합이 필요한경우 분할해서 사용
+
+[2] Specialization(특수화, 전문화)
+웰컴 다이얼로그는 다이얼로그의 특별한 케이스입니다
+범용적인 개념을 구별이 되게 구체화하는 것을 특수화라고 합니다
+객체지향 언어에서는 상속을 사용하여 특수화를 구현합니다
+리액트에서는 합성을 사용하여 특수화를 구현합니다.
+Dialog.jsx 와 같이 특수화는 범용적으로 쓸 수 있는 컴포넌트를 만들어 놓고 이를 특수한 목적으로 사용하는 합성방식입니다.
+
+# 12.1 Shared State 
+Shared State는 state의 공유를 의미합니다
+
+같은 부모 컴포넌트의 state를 자식 컴포넌트가 공유해서 사용하는 것입니다.
+부모 컴포넌트가 섭씨 온도의 state를 갖고 있고, 이것을 컴포넌트 C와 컴포넌트 F가 공유해서 사용하는 것을 보여줍니다.
+//
+컴포넌트 {degree: 25}->컴포넌트 C(온도를 섭씨로 표현){degree: 25}->컴포넌트 F(온도를 화씨로 표현){degree: 77}
+
+정리하면 상위 컴포넌트인 Calculator에서 온도와 단위를 state로 갖고 두개의 하위 컴포넌트는 각각섭씨와 화씨로 변환된 온도와 단위 그리고 온도를 업데이트하기위해 함수를 props로 갖고 있으며 이렇게 모든ㄴ 컴포넌트가 state를 갖지 않고 상위 컴포넌트로 올려서 공유하면 리액트를 더욱 간결하고 효율적으로 개발할 수 있습니다.
 # select 태그
 
 select 태그도 textarea와 동일
 
-`
-function FruitSelect(props) {
+`function FruitSelect(props) {
    const [value, setValue] = useState('grape')
 }
 <select>
@@ -13,7 +44,8 @@ function FruitSelect(props) {
 <option value = "banana"> 바나나</option>
 <option selected value = "grape"> 포도</option>
 <option value = "watermelon"> 수박</option>
-</select>`
+</select>
+`
 
 # File input 태그
 
