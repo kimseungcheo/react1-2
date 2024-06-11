@@ -1,15 +1,14 @@
 import './App.css';
-import SplitPane from './SplitPane';
+import React from 'react';
+import DarkOrLight from './DarkOrLight';
+
 
 
 function App() {
   return (
     <>
+      <DarkOrLight/>
 
-      <SplitPane
-        left = { <Contacts/>}
-        rigth = { <Chat/>}
-      />
 
     </>
 

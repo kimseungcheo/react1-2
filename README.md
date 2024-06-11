@@ -1,5 +1,157 @@
 # 김승철 201630240
 
+# 14.6 useContext
+함수형 컴포넌트에서 컨텍스트를 사용하기 위해 컴포넌트를 매번 Consumer컴포넌트로 감싸주는 것보다 더 좋은 방법이 있습니다
+
+useContext() 혹은 React.createContext()함수 호출로 생성된 컨텍스트 객체를 인자로 받아서 현재 컨텍스트의 값을 리턴합니다.
+이방법도 가장 가까운 상위 Provider로부터 컨텍스트의 값을 받아옵니다
+만일 값이 변경되면 useContext()혹은 사용하는 컴포넌트가 재 렌더링 됩니다.
+또한 useContext()훅을 사용할 때에는 파라미터로 컨텍스트 객체를 넣어줘야 한다는 것을 기억해야 합니다.
+
+# 14.5 여러개의 컨텍스트 사용하기 
+여러개의 컨텍스트를 동시에 사용하려면 Context.Provider를 중첩해서 사용합니다.
+예제에서는 ThemeContext와 UserContext를 중첩해서 사용하고 있습니다.
+이런 방법으로 여러개의 컨텍스트를 동시에 사용할 수 있습니다.
+하지만 두개 또는 그이상의 컨텍스트 값이 자주 함꼐 사용될경우 모든 값을 한번에 제공해주는 별도의 render prop컴포넌트를 직접 만드는것을 고려하는 것이 좋습니다.
+
+# 14.4 컨텍스트 API
+이절에서는 리액트에서 제공하는 컨텍스트 API를 통해 컨텍스트를 어떻게 사용하는지에 대해 알아 봅니다,
+
+[1]React.createContext
+컨텍스트를 생성하기 위한 함수입니다.
+파라메타에는 기본값을 넣어주면 됩니다
+하위컴포넌트는 가장 가까운 상위 레벨의 Provider로부터 컨텍스트를 받게 되지만, 만일 Provider를 찾을수 없다면 설정한 기본값을 사용하게 됩니다.
+`const MyContext = React.createContext(기본값);`
+
+
+[2]Context.Provider
+Context.Provider컴포넌트를 하위 컴포넌트들을 감싸주면 모든 하위 컴포넌트들이 해당 컨텍스트의 데이터에 접근할 수 있게 됩니다.
+
+<MyContext.Provider value= {/* some value*/}>
+Provider컨포넌트에는 value라는 prop이 있고 이것은 Provider컴포넌트 하위에 있는 컴포넌트들에게 전달이 됩니다.
+하위 컴포넌트를 consumer컴포넌트라고 부릅니다
+
+# Provider value에서 주의해야 할 사항
+1. 불필요한 리렌더링 방지:
+Provider의 value가 변경될 때마다 해당 Provider를 구독하고 있는 모든 컴포넌트가 다시 렌더링됩니다. 따라서 value가 자주 변하지 않도록 관리하는 것이 중요합니다.
+value 속성에 직접 객체를 할당하면, React는 객체의 참조가 변경된 것으로 인식하여 매번 리렌더링을 유발할 수 있습니다. 이를 방지하기 위해 useMemo를 사용해서 메모이제이션을 적용할 수 있습니다.
+jsx
+import React, { useMemo, useState } from 'react';
+const MyContext = React.createContext();
+const MyProvider = ({ children }) => {
+  const [state, setState] = useState({});
+
+  const value = useMemo(() => ({ state, setState }), [state]);
+
+  return (
+    <MyContext.Provider value={value}>
+      {children}
+    </MyContext.Provider>
+  );
+};
+2. 값의 안정성 유지:
+value로 전달하는 객체나 함수가 불필요하게 변경되지 않도록 주의해야 합니다. 이는 특히 함수형 컴포넌트에서 상태 업데이트 시 함수나 객체가 새로 생성되지 않도록 해야 합니다.
+useCallback과 useMemo를 활용하여 함수나 객체를 메모이제이션하여 불필요한 참조 변경을 막을 수 있습니다.
+jsx
+
+const updateValue = useCallback(() => {
+  // 업데이트 로직
+}, [/* dependencies */]);
+
+const value = useMemo(() => ({ state, updateValue }), [state, updateValue]);
+
+3. Context 분할:
+
+하나의 Context에 너무 많은 상태나 로직을 담지 않도록 주의합니다. 필요에 따라 여러 개의 Context로 분리하여 관리하는 것이 좋습니다. 이렇게 하면 특정 상태 변화에 의해 불필요한 컴포넌트 리렌더링을 방지할 수 있습니다.
+jsx
+
+
+const UserContext = React.createContext();
+const ThemeContext = React.createContext();
+
+const App = () => (
+  <UserProvider>
+    <ThemeProvider>
+      <YourComponent />
+    </ThemeProvider>
+  </UserProvider>
+);
+
+4. 디버깅과 유지보수:
+
+Context를 사용하여 상태를 관리할 때, 상태의 흐름과 데이터 변경을 추적하기 어려울 수 있습니다. 디버깅과 유지보수를 쉽게 하기 위해 상태 관리 라이브러리(예: Redux, Zustand 등)를 사용하는 것도 고려해볼 수 있습니다.
+이러한 주의 사항들을 염두에 두고 Context.Provider를 사용하면, 애플리케이션의 성능과 유지보수성을 높일 수 있습니다.
+
+[3] Class.contextType
+provider하위에 있는 클래스 컴포넌트에서 컨텍스트의 데이터에 접근하기 위해 사용합니다.
+Class 컴포넌트는 더 이상 사용하지 않으므로 참고만 합니다
+
+[4] Context.Consumer
+함수형 컴포넌트에서 Context.Consumer를 사용하여 컨텍스트를 구동할 수 있습니다.
+<MyContext.Consumer>
+  {value = > /* 컨텍스트의 값에 따라서 컴포넌트들을 렌더링*/}
+</MyContext.Consumer>
+
+컴포넌트의 자식으로 함수가 올수 있는데 이것을 function as a child라고 합니다
+Context.Consumer로 감싸주면 자식으로 들어간 함수가 현재 컨텍스트의 value를 받아서 리액트노드로 리턴합니다.
+함수로 전달되는 value는 Provider의 value prop와 동일 합니다.
+
+[5] Context.displayName
+컨텍스트 객체는 displaName이라는 문자열 속성을 갖습니다.
+크롬의 리액트 개발자 도구에서는 컨텍스트의 Provider나 Consumer를 표시 할 떄 displayName을 함께 표시해 줍니다
+`const MyContext = React.createContext(some value)
+MyContext.displayName= 'MyDisplayName';
+
+//개발자 도구에 "MyDisplayName.Provider로 표시됨
+<MyContext.Provider>
+//개발자 도구에 "MyDisplayName.Consumer로 표시됨
+<MyContext.Consumer>
+`
+
+ # 14.3 컨텍스트를 사용하기 전에 고려할점
+컨텍스트는 다른 레벨의 많은 컴포넌트가 특정 데이터를 필요로 하는 경우에 주로 사용합니다.
+하지만 무조건 컨텍스트를 사용하는 것이 좋은 것은 아닙니다.
+왜냐하면 컴포넌트와 컨텍스트가 연동되면 재사용성이 떨어지기 때문입니다.
+따라서 다른 레벨의 많은 컴포넌트가 데이터를 필요로하는 경우가 아니면 PROPS를 통해 데이터를 전달하는 컴포넌트 합성 방법이 더 적합합니다.
+
+실제 USER와 avatarSize를 사용하는 것은 Avatar컴포넌트 뿐인데 여러 단계에 걸쳐 props를 전달하는 경우 컨텍스트를 사용하지 않고 문제를 해결할 수 있는 방법은 Avatar컴포넌트를 변수에 저장하여 직접 넘겨주는 것입니다.
+이렇게 하면 중간 단계의 컴포넌트들은 user와 avatarSize에 대해 몰라도 됩니다.
+하지만 방금의 예제가 모든 상황에서좋은 것은 아닙니다.
+데이터가 많아질수록 상위 컴포넌트가 점점 더 복잡해지기 떄문입니다.
+이런경우 하위 컴포넌트를 여러 개의 변수로 나눠서 전달하면 됩니다.
+
+하지만 어떤 경우에는 하나의 데이터에 다양한 레벨에 있는 중첩된 컴포넌트들의 접근이 필요할 수 있습니다
+이런 경우에는 컨텍스트가 유리합니다
+컨텍스트는 해당 데이터와 변경사항을 모두 하위 컴포넌트들에게 broadCast해주기 때문입니다.
+컨텍스트를 사용하기에 적합한 데이터의 대표적인 예로는 지역정보 UI테마 그리고 캐싱된 데이터 등이 있습니다.
+
+# 14.2 언제 컨텍스트를 사용해야 할까?
+
+여러 컴포넌트에서 자주 필요로 하는 데이터는 로그인 여부, 로그인 정보, UI테마 현재 선택된 언어 등이 있습니다.
+이런 데이터들을 기존의 방식대로 컴포넌트의 props를 통해 넘겨주는 예를 페이지 392에서 보여주고 있습니다
+예제에서 처럼 props를 통해 데이터를 전달하는 기존 방식은 실제 데이터를 필요로 하는 컴포넌트까지의 깊이가 깊어질 수록 복잡해 집니다.
+또한 반복적인 코드를 계속해서 작성해주어야 하기 때문에 비효율적이고 가독성이 떨어집니다
+컨텍스트를 사용하면 이러한 방식을 깔끔하게 개선할 수 있습니다.
+페이지 393의 예제는 컨텍스트를 사용한 예입니다.Reacct.createContext()함수를 사용해서 ThemeContext라는 이름의 컨텍스트를 생성합니다.
+컨텍스트를 사용하려면 컴포넌트의 상위 컴포넌트에서 Provider로 감싸주어야 합니다.
+
+# 14.1 컨텍스트란 무엇인가?
+기존의 일반적인 리액트에서는 데이터가 컴포넌트의 props를 통해 부모에서 자식으로 단방향으로 전달되었습니다.
+컴텐스트는 리액트 ㅁ컴포넌트들 사이에서 데이터를 기존의 props를 통해 전달하는 방싣 대신컴포넌트 트리를 통해 곧바로 컴포넌트에 전달하는 새로운 방식을 제공합니다
+이 것을 통해 곧바로 컴포넌트에 전달하는 새로운 방식으로 제공합니다
+이것을 통해 어떤 컴포넌트 라도 쉽게 데이터에 접근할 수 있습니다.
+컨텍스트를 사용하면 일일이 props로 전달할 필요없이 그림처럼 데이터를 필요로 하는 컴포넌트에 곧바로 데이터를 접근 할수 있습니다.
+
+# 13.3 Card컴포넌트 만들기
+Card.jsx 컴포넌트 만들기 / 하위 컴포넌트를 감싸서 카드 형태로 보여주는 컴포넌트.
+
+# 13.2상속에 대해 알아보기
+합성과 대비되는 개념으로 상속(Inheritence)이 있습니다
+자식 클래스는 부모클래스가 가진 변수나 함수 등의 속성을 모두 갖게되는 개념입니다.
+하지만 리액트에서는 상속보다는 합성을 통해 새로운 컴포넌트를 생셩합니다.
+
+복잡한 컴포넌트를 쪼개 여러개의 컴포넌트로 만들고 만든 컴포넌트들을 조합하여 새로운 컴포넌트를 만들자
+
 # 13.1 합성에 대해 알아보지
 
 합성은 여러개의 컴포넌트를 합쳐서 새로운 컴포넌트를 만드는 것입니다
@@ -22,6 +174,15 @@
 객체지향 언어에서는 상속을 사용하여 특수화를 구현합니다
 리액트에서는 합성을 사용하여 특수화를 구현합니다.
 Dialog.jsx 와 같이 특수화는 범용적으로 쓸 수 있는 컴포넌트를 만들어 놓고 이를 특수한 목적으로 사용하는 합성방식입니다.
+
+[3]Containment와 Specialization을 같이 사용하기
+Containment를 위해서 props.children을 사용하고, Specialization을 위해 직접 정의한 props를 사용하면 됩니다.
+페이지 376의 코드를 참고합니다
+Dialog컴포넌트는 이전의 것과 비슷한데 Containment를 위해 끝부분에 props.children을 추가 했습니다
+Dialog컴포넌트를 사용하는 SignUpDialog는 Specialization을 위해 props인 title, message에 값을 넣어주고 있고, 입력을 받기 위해 <input>과 <button>을 사용합니다.
+이 두개의 태그는 모두 props.children으로 전달되어 다이얼로그에 표시됩니다.
+
+이러한 형태로 Containment와 Specialization을 동시에 사용할 수 있습니다.
 
 # 12.1 Shared State 
 Shared State는 state의 공유를 의미합니다
