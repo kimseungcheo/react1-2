@@ -1,17 +1,12 @@
-import './App.css';
 import React from 'react';
-import DarkOrLight from './DarkOrLight';
-
-
+import './App.css';
+import MainPage from './240612/MainPage';
 
 function App() {
   return (
-    <>
-      <DarkOrLight/>
-
-
-    </>
-
+    <div className="App">
+      <MainPage />
+    </div>
   );
 }
 

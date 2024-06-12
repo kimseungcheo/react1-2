@@ -1,4 +1,371 @@
 # 김승철 201630240
+### 15.2 styled-components
+CSS 문법을 그대로 사용하면서 결과물을 스타일링된 컴포넌트 형태로 만들어 주는 오픈소스 라이브러리 입니다.
+컴포넌트의 개념을사용하고 있어 리액트 개발에 많이 사용됩니다.
+styled-components 설치하기
+npm install --save styled-components
+교재에는 위와 같이 나와있지만 npm v5부터는 사용하지 앟아도 됩니다 자동추가가 됨
+import해서 사용
+
+styled-components 기본 사용법
+태그드 템플릿 리터럴을 사용하여 구성요소의 스타일을 지정합니다.
+태그드 템플릿 리터럴은 자바스크립트에서 제공하는 문법 중 하나로 리터럴을 템플릿 형태로 사용하는 것입니다.
+styled.<HTML tag>`...`의 형태로 정의한후 컴포넌트를 사용해서 사용합니다.
+
+styled-components
+### 15.1 CSS
+##  CSS란?
+CSS는 Cascading Style Sheets의 약자로 스타일링을 위한 언어 입니다.
+Cascading이란 계단식이라는 뜻으로 한 엘리먼트에 여러 스타일이 적용 될 경우 스타일간의 충돌을 막기 위해 계단식으로 스타일을 적용시키는 규칙을 갖고 있습니다.
+즉하나의 스타일이 여러개의 엘리먼트에 적용될 수도 있고, 하느ㅏ의 엘리먼트에도 여러개의 스타일이 적용될 수도 있습니다.
+엘리먼트에 스타일이 적용되는 규칙을 selector(선택자)라고 합니다. CSS는 이 선택자와 스타일로 이루어 집니다.
+이번장에서는 선택자와 스타일을 카테고리 별로 나누어 학습합니다.
+
+##  CSS문법과 선택자
+선택자를 먼저 쓰고 다음에 적용할 스타일을 중괄호 한에 세미콜론으로 구분하여 하나씩 작성합니다.
+선택자는 HTML엘리먼트를 직접 넣어도 되고, 엘리먼트의 조합 혹은 class의 형태로 작성가능합니다.
+스타일은 property(속성)과 key Value(키값)으로 이루어 지며, 이들은 콜론 으로 구분하고, 각 스타일은 세미콜론으로 구분합니다
+몇가지 선택자의 예가 있습니다
+# 첫번째는 태그를 직접 사용하는 것 입니다.
+`
+h1{
+  color: green;
+}
+`
+# 두번쨰는 id선택자를 설명하는데 사용하지 않습니다 id선택자는 javascript에서 id선택자를 사용하기 때문에 css의 id값인지 javascript의 id값인지 구분하기 힘들기 때문입니다.
+
+# 세번째는 class선택자입니다. HTML태그로 특정할수없는 스타일은모두 class로 정의합니다.
+`
+<span class="medium">
+  ...
+</span>
+
+.medium {
+  font-size: 20px;
+}
+`
+# 네번째 자손 선택자 (Descendant Selector)
+
+특정 요소 내에 있는 다른 특정 요소에 스타일을 적용합니다.
+
+
+div p {
+    margin: 10px;
+}
+<div> 요소 내의 모든 <p> 요소에 10픽셀의 여백을 줍니다.
+
+# 다섯번째 자식 선택자 (Child Selector)
+
+특정 요소의 직계 자식 요소에 스타일을 적용합니다.
+
+
+ul > li {
+    list-style-type: none;
+}
+모든 <ul> 요소의 직계 자식인 <li> 요소의 리스트 스타일을 제거합니다.
+
+# 여섯번째 속성 선택자 (Attribute Selector)
+
+특정 속성을 가진 요소에 스타일을 적용합니다.
+
+input[type="text"] {
+    border: 1px solid black;
+}
+
+# 일곱번째는 상태 선택자입니다.
+:hover
+:active
+:focus
+:checked
+:first-child, :lastchild 
+:hover
+
+사용자가 요소 위에 마우스를 올렸을 때 적용됩니다.
+css
+
+
+a:hover {
+    color: green;
+}
+사용자가 링크에 마우스를 올렸을 때 글자 색상이 초록색으로 변경됩니다.
+
+:active
+
+사용자가 요소를 클릭하는 순간에 적용됩니다.
+css
+
+
+button:active {
+    background-color: blue;
+}
+사용자가 버튼을 클릭하는 동안 버튼의 배경 색상이 파란색으로 변경됩니다.
+
+:focus
+
+요소가 포커스를 받을 때 적용됩니다. 주로 입력 필드에 사용됩니다.
+css
+
+
+input:focus {
+    border: 2px solid red;
+}
+입력 필드가 포커스를 받을 때 테두리가 빨간색으로 변경됩니다.
+
+:checked
+
+체크박스나 라디오 버튼이 선택된 상태일 때 적용됩니다.
+
+input[type="checkbox"]:checked {
+    background-color: yellow;
+}
+체크박스가 선택되었을 때 배경 색상이 노란색으로 변경됩니다.
+
+:first-child
+
+부모 요소의 첫 번째 자식 요소에 스타일을 적용합니다.
+
+p:first-child {
+    font-weight: bold;
+}
+부모 요소의 첫 번째 <p> 요소의 글자를 굵게 만듭니다.
+
+:last-child
+
+부모 요소의 마지막 자식 요소에 스타일을 적용합니다.
+
+p:last-child {
+    font-style: italic;
+}
+부모 요소의 마지막 <p> 요소의 글자를 이탤릭체로 만듭니다.
+
+이와 같은 상태 선택자들은 웹 페이지 요소의 상호작용성 및 동적 스타일링을 가능하게 해줍니다.
+
+## 레이아웃과 관련된 속성
+
+# 화면에 엘리먼트를 어떻게 배치할 것인지를 정의합니다
+가장 중요한 속성은 display입니다.
+모든 엘리먼트는 기본 display속성을 갖고 있지만 이 기본값을 변경해 줄 수 있습니다.
+div{
+  display:none | block | inline | flex;
+}
+none는 존재는 하지만 화면에 보이지 않는 것으로 자바스크립트를 넣을때 많이 사용합니다
+block은 세로로 정렬되며, width의 height를 가질수 있다 크기와 상관없이 한 줄을 점유합니다
+inline은 가로로 정렬되면 width의 height를 가질수 없으며 컨텐츠의 크기만큼 공간을 점유합니다
+inline-block은 기본적으로 inline의 특성을 갖기만, width와 height등 block의 특성을 사용할 수 있습니다.
+
+# 대표적인 block과 inline태그는 다음과 같습니다.
+블록 요소 (Block Elements)
+블록 요소는 항상 새로운 줄에서 시작하며, 가로 방향으로 가능한 모든 공간을 차지합니다. 일반적으로 콘텐츠의 구조를 형성하는 데 사용됩니다.
+
+대표적인 블록 요소:
+
+<div>: 문서 내의 구획을 정의합니다.
+<h1>, <h2>, <h3>, <h4>, <h5>, <h6>: 제목을 정의합니다.
+<p>: 단락을 정의합니다.
+<ul>, <ol>, <li>: 목록을 정의합니다.
+<table>, <tr>, <td>, <th>: 표를 정의합니다.
+<header>: 문서의 머리말을 정의합니다.
+<footer>: 문서의 꼬리말을 정의합니다.
+<section>: 문서의 구역을 정의합니다.
+<article>: 독립적인 콘텐츠를 정의합니다.
+<nav>: 네비게이션 링크를 정의합니다.
+인라인 요소 (Inline Elements)
+인라인 요소는 같은 줄에 다른 요소와 나란히 위치할 수 있으며, 콘텐츠의 일부를 강조하거나 스타일링하는 데 사용됩니다.
+
+대표적인 인라인 요소:
+
+<span>: 텍스트를 구획화하여 스타일을 적용합니다.
+<a>: 하이퍼링크를 정의합니다.
+<img>: 이미지를 삽입합니다.
+<strong>: 텍스트를 굵게 표시합니다.
+<em>: 텍스트를 이탤릭체로 표시합니다.
+<br>: 줄바꿈을 삽입합니다.
+<input>: 사용자 입력 필드를 정의합니다.
+<label>: 폼 요소에 대한 레이블을 정의합니다.
+<code>: 짧은 코드 조각을 정의합니다.
+<abbr>: 약어를 정의합니다.
+
+flex는 컨테이너의 형태로 엘리먼트를 관리합니다 Mozilla참고 
+http://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout/Basic_concepts_of_flexbox
+
+최근 들어서는 Grid를 많이 사용하며 Flex가 1차원적이라면 Grid는 2차원 적으로 관리가 가능합니다.
+http://developer.mozilla.org/ko/play
+
+visibility속성은 엘리먼트의 가시성을 정의합니다.
+
+<style>
+div{
+  visibility:visible|hidden;
+}
+</style>
+
+display: none과 visibility: hidden의 차이
+
+display: none: 요소를 화면에서 완전히 제거합니다. 요소가 차지하는 공간도 사라지고, 해당 요소는 렌더링 트리에서 제외됩니다.
+visibility: hidden: 요소가 화면에 보이지 않지만, 여전히 그 자리를 차지합니다. 요소의 공간은 유지되지만, 시각적으로는 보이지 않습니다.
+position 속성 (http://developer.mozilla.org/en-US/docs/Web/CSS/position)
+position 속성은 요소의 위치를 어떻게 지정할지를 정의합니다. 각 값의 의미는 다음과 같습니다:
+
+static: 기본값으로, 요소는 문서의 정상적인 흐름에 따라 배치됩니다. top, right, bottom, left 속성은 적용되지 않습니다.
+relative: 요소는 문서의 정상적인 흐름에 따라 배치되지만, top, right, bottom, left 속성을 사용하여 자신의 원래 위치에서 상대적으로 이동할 수 있습니다.
+absolute: 요소는 문서의 흐름에서 제거되고, 가장 가까운 position이 relative, absolute, fixed 또는 sticky로 설정된 조상 요소를 기준으로 배치됩니다. 조상 요소가 없다면 body 요소를 기준으로 합니다.
+fixed: 요소는 화면(viewport)을 기준으로 고정됩니다. 스크롤을 하더라도 요소는 항상 같은 위치에 고정되어 있습니다.
+sticky: 요소는 스크롤 위치에 따라 relative와 fixed 사이에서 전환됩니다. 요소가 특정 스크롤 위치에 도달하면 고정(fixed)되고, 그전까지는 상대적(relative)으로 위치합니다.
+추가 설명
+
+fixed와 sticky의 차이점:
+fixed: 요소가 항상 뷰포트에 고정되어 있습니다. 스크롤해도 위치가 변하지 않습니다.
+sticky: 요소가 스크롤에 따라 고정 위치로 변합니다. 예를 들어, 요소가 뷰포트의 상단에 도달할 때까지는 relative로 위치하고, 그 이후에는 fixed로 위치하게 됩니다.
+아래는 예시 코드입니다:
+
+<style>
+  .static {
+    position: static;
+  }
+  .relative {
+    position: relative;
+    top: 10px; /* 원래 위치에서 10px 아래로 이동 */
+  }
+  .absolute {
+    position: absolute;
+    top: 20px; /* 가장 가까운 조상 요소 또는 body를 기준으로 20px 아래로 이동 */
+  }
+  .fixed {
+    position: fixed;
+    top: 0; /* 뷰포트의 상단에 고정 */
+  }
+  .sticky {
+    position: sticky;
+    top: 30px; /* 뷰포트의 상단에서 30px에 도달할 때까지 relative로 위치, 이후 fixed로 고정 */
+  }
+</style>
+
+<div class="static">Static Position</div>
+<div class="relative">Relative Position</div>
+<div class="absolute">Absolute Position</div>
+<div class="fixed">Fixed Position</div>
+<div class="sticky">Sticky Position</div>
+
+
+
+## 폰트와 관련된 속성
+1. font-family
+텍스트에 사용할 폰트의 종류를 지정합니다. 여러 폰트를 쉼표로 구분하여 나열할 수 있으며, 브라우저는 나열된 순서대로 폰트를 적용하려 시도합니다.
+
+css
+
+
+p {
+  font-family: "Arial", "Helvetica", sans-serif;
+}
+2. font-size http://nekocalc.com
+텍스트의 크기를 지정합니다. 단위로는 px, em, rem, % 등을 사용할 수 있습니다.
+
+css
+
+
+h1 {
+  font-size: 24px;
+}
+
+p {
+  font-size: 1.5em;
+}
+3. font-weight
+텍스트의 굵기를 지정합니다. 값으로는 normal, bold, bolder, lighter, 또는 숫자(100, 200, ..., 900)를 사용할 수 있습니다.
+
+css
+
+
+strong {
+  font-weight: bold;
+}
+
+p {
+  font-weight: 600; /* 중간 굵기 */
+}
+4. font-style
+텍스트의 스타일을 지정합니다. 값으로는 normal, italic, oblique를 사용할 수 있습니다.
+
+css
+
+
+em {
+  font-style: italic;
+}
+5. font-variant
+텍스트를 작은 대문자(small-caps)로 변환합니다. 값으로는 normal과 small-caps가 있습니다.
+
+css
+
+
+p {
+  font-variant: small-caps;
+}
+6. line-height
+텍스트의 줄 높이를 지정합니다. 단위로는 숫자, px, em, % 등을 사용할 수 있습니다. 텍스트의 가독성을 높이기 위해 사용됩니다.
+
+css
+
+
+p {
+  line-height: 1.5; /* 1.5배 높이 */
+}
+7. letter-spacing
+텍스트의 글자 간 간격을 지정합니다. 단위로는 px, em 등을 사용할 수 있습니다.
+
+css
+
+
+p {
+  letter-spacing: 2px; /* 글자 사이에 2px 간격 */
+}
+8. word-spacing
+텍스트의 단어 간 간격을 지정합니다. 단위로는 px, em 등을 사용할 수 있습니다.
+
+css
+
+
+p {
+  word-spacing: 4px; /* 단어 사이에 4px 간격 */
+}
+9. text-transform
+텍스트의 대소문자를 제어합니다. 값으로는 none, capitalize, uppercase, lowercase가 있습니다.
+
+css
+
+
+p {
+  text-transform: uppercase; /* 모든 텍스트를 대문자로 변환 */
+}
+10. text-align
+텍스트의 정렬을 지정합니다. 값으로는 left, right, center, justify가 있습니다.
+
+css
+
+
+p {
+  text-align: center; /* 텍스트를 가운데 정렬 */
+}
+11. font
+font 속성을 사용하여 여러 폰트 관련 속성을 한 번에 설정할 수 있습니다. 순서를 지켜야 하며, font-style, font-variant, font-weight, font-size, line-height, font-family 순으로 작성합니다.
+
+css
+
+
+p {
+  font: italic small-caps bold 16px/1.5 "Arial", sans-serif;
+}
+
+글꼴 분류 serif,sans-serif,cursive등등..
+
+기타 속성
+투명도 컬러값 #ff000055 
+rgb컬러값 rgb(255 ,0, 0)
+HSL 컬러값 hsl(120, 100%, 50%, 0.3)
+미리 정의된 색상의 이름: red
+currentcolor 키워드: 현재 지정된 색상 값을 사용
+*HUE: hsl(hue, saturation, lightness)
 
 # 14.6 useContext
 함수형 컴포넌트에서 컨텍스트를 사용하기 위해 컴포넌트를 매번 Consumer컴포넌트로 감싸주는 것보다 더 좋은 방법이 있습니다
@@ -27,7 +394,7 @@ useContext() 혹은 React.createContext()함수 호출로 생성된 컨텍스트
 [2]Context.Provider
 Context.Provider컴포넌트를 하위 컴포넌트들을 감싸주면 모든 하위 컴포넌트들이 해당 컨텍스트의 데이터에 접근할 수 있게 됩니다.
 
-<MyContext.Provider value= {/* some value*/}>
+<MyContext.Provider value= {/* some value */}>
 Provider컨포넌트에는 value라는 prop이 있고 이것은 Provider컴포넌트 하위에 있는 컴포넌트들에게 전달이 됩니다.
 하위 컴포넌트를 consumer컴포넌트라고 부릅니다
 
